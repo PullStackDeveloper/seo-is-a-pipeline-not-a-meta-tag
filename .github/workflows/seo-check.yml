@@ -1,0 +1,22 @@
+name: SEO check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  seo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Guard the source of truth first — cheap, fails fast on bad frontmatter.
+      - run: npm run seo:check
+      # Then prove the SEO artifacts actually build (metadata, sitemap, robots,
+      # OG images are all produced during the build).
+      - run: npm run build
